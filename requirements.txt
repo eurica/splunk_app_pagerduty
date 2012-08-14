@@ -1,0 +1,15 @@
+# Requirements for splunk_app_pagerduty
+#
+# Author:: Greg Albrecht <mailto:gba@splunk.com>
+# Copyright:: Copyright 2012 Splunk, Inc.
+# License:: All rights reserved. Do not redistribute.
+#
+
+
+pylint
+pep8
+mock
+nose
+flake8
+coverage
+clonedigger
