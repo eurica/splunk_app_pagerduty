@@ -9,14 +9,13 @@
 
 
 VAGRANT_CMD='/opt/vagrant/bin/vagrant'
-TAR_EX='--exclude .git* --exclude local --exclude metadata/local.meta --exclude *.tar --exclude *.gz --exclude *.spl'
 
 
 init:
 	pip install -r requirements.txt --use-mirrors
 
 build:
-	tar --exclude=$(TAR_EX) -zcpf splunk_app_pagerduty.spl ../splunk_app_pagerduty
+	tar -X .tar_exclude -zcpf splunk_app_pagerduty.spl ../splunk_app_pagerduty
 
 vagrantinit:
 	$(VAGRANT_CMD) init
