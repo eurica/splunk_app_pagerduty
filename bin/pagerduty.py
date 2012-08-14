@@ -2,7 +2,9 @@
 """PagerDuty Saved Search Alert Script for Splunk.
 
 Derived from @samuelks' Python Pagerduty Module
-https://github.com/samuel/python-pagerduty"""
+https://github.com/samuel/python-pagerduty
+"""
+
 __author__ = 'Greg Albrecht <gba@splunk.com>'
 __copyright__ = 'Copyright 2012 Splunk, Inc.'
 __license__ = 'Apache License 2.0'
@@ -78,44 +80,18 @@ class PagerDuty(object):
         return result.get('incident_key')
 
 
-def gzcat(gzfile):
-    """Decompresses gzip'd files, returns their content.
-
-    @param gzfile: gzip'd file to decompress.
-    @type gzfile: str
-
-    @return: Contents of decompressed gzfile.
-    @rtype: str
-    """
-    gzfd = gzip.open(gzfile, 'rb')
-    file_content = gzfd.read()
-    gzfd.close()
-    return file_content
-
-
-def csv_to_dict(raw_csv):
-    """Deserializes CSV into native Python Dictionary.
-
-    @param raw_csv: CSV content.
-    @type raw_csv: str
-
-    @return: CSV content as a native Python Dictionary.
-    @rtype: dict
-    """
-    return csv.DictReader(raw_csv)
-
-
-def extract_events():
+def extract_events(events_file):
     """Extracts event data from Splunk CSV file.
+
+    @param events_file: Path to GZIP compressed CSV file.
+    @type events_file: str
 
     @return: Events from CSV file.
     @rtype: list
     """
     events = []
-    events_file = os.environ.get('SPLUNK_ARG_8')
-    if events_file is not None:
-        if os.path.exists(events_file):
-            events = csv.DictReader(gzip.open(events_file))
+    if events_file is not None and os.path.exists(events_file):
+        events = csv.DictReader(gzip.open(events_file))
     return events
 
 
@@ -140,17 +116,16 @@ def trigger_pagerduty(description, details, service_api_key,
     return pagerduty.trigger(description, incident_key, details)
 
 
-def get_service_api_key():
+def get_service_api_key(config_file):
     """Extracts PagerDuty Service Integration API Key from Splunk Config.
 
+    @param config_file: Full path to file containing Pagerduty API Credentials.
+    @type config_file: str
     @return: PagerDuty Service Integration API Key.
     @rtype: str
     """
-    cfg_src = os.path.join(
-        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'pagerduty', 'local',
-        'pagerduty.conf')
     config = ConfigParser.ConfigParser()
-    config.read(cfg_src)
+    config.read(config_file)
     return config.get('service_api', 'service_api_key')
 
 
@@ -159,13 +134,17 @@ def main():
     # We'll serialize this dict into JSON -> PagerDuty Details.
     details = {'env': {}, 'events': []}
 
-    service_api_key = get_service_api_key()
+    config_file = os.path.join(
+        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'splunk_app_pagerduty',
+        'local', 'pagerduty.conf')
+
+    service_api_key = get_service_api_key(config_file)
 
     for k in os.environ:
         if 'SPLUNK_ARG' in k:
             details['env'][k] = os.environ.get(k)
 
-    events = extract_events()
+    events = extract_events(os.environ.get('SPLUNK_ARG_8'))
     for event in events:
         details['events'].append(event)
 

@@ -1,0 +1,9 @@
+.git*
+local
+metadata/local.meta
+*.tar
+*.gz
+*.spl
+*.deb
+.vagrant
+.tar_exclude
