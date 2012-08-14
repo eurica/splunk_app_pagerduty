@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """PagerDuty Splunk Setup REST Handler."""
+
 __author__ = 'Greg Albrecht <gba@splunk.com>'
 __copyright__ = 'Copyright 2012 Splunk, Inc.'
 __license__ = 'Apache License 2.0'
 
 
-import logging as logger
 import os
+import logging
 import shutil
 
 import splunk.admin
@@ -26,23 +27,25 @@ class ConfigPagerDutyApp(splunk.admin.MConfigHandler):
                     confInfo[stanza].append(key, val)
 
     def handleEdit(self, confInfo):
-        _ = confInfo
+        del confInfo
         if self.callerArgs.data['service_api_key'][0] in [None, '']:
             self.callerArgs.data['service_api_key'][0] = ''
 
         self.writeConf('pagerduty', 'service_api', self.callerArgs.data)
-        self._installit()
-
-    def _installit(self):
-        """Copies pagerduty.py to Splunk's bin/scripts directory."""
-        splunk_home = os.environ['SPLUNK_HOME']
-        script_src = os.path.join(
-            splunk_home, 'etc', 'apps', 'pagerduty', 'bin', 'pagerduty.py')
-        script_dest = os.path.join(splunk_home, 'bin', 'scripts')
-        logger.info(
-            "Copying script_src=%s to script_dest=%s" %
-            (script_src, script_dest))
-        shutil.copy(script_src, script_dest)
+        install_pagerduty_py(os.environ.get('SPLUNK_HOME'))
 
 
-splunk.admin.init(ConfigPagerDutyApp, splunk.admin.CONTEXT_NONE)
+def install_pagerduty_py(splunk_home):
+    """Copies pagerduty.py to Splunk's bin/scripts directory."""
+    script_src = os.path.join(
+        splunk_home, 'etc', 'apps', 'splunk_app_pagerduty', 'bin', 'pagerduty.py')
+    script_dest = os.path.join(splunk_home, 'bin', 'scripts')
+
+    logging.info(
+        "Copying script_src=%s to script_dest=%s" %
+        (script_src, script_dest))
+    shutil.copy(script_src, script_dest)
+
+
+if __name__ == '__main__':
+    splunk.admin.init(ConfigPagerDutyApp, splunk.admin.CONTEXT_NONE)

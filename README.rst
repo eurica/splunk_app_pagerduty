@@ -1,11 +1,9 @@
-PagerDuty Saved Search Alert App for Splunk.
+Splunk App for PagerDuty - Enables PagerDuty Saved-Search Alerts.
 
 Usage
 =====
-Precise usage TK, for now:
-
 1. Download & Install Splunk.
-2. Create PagerDuty Service Integration API Key.
+2. Create PagerDuty Service Integration API Key http://www.pagerduty.com/docs/integration-api/integration-api-documentation
 3. Install App.
 4. Set API Key.
 5. Enable Alert (below):
@@ -25,4 +23,3 @@ Copyright 2012 Splunk, Inc.
 License
 =======
 Apache License 2.0
-
