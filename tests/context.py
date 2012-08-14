@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Tests for Splunk Pagerduty App."""
+"""Tests for Splunk App for PagerDuty."""
 
 
 import sys

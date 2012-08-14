@@ -69,4 +69,4 @@ generate_events:
 
 clean:
 	rm -rf *.egg* build dist *.pyc *.pyo cover doctest_pypi.cfg nosetests.xml \
-		pylint.log *.egg output.xml flake8.log output.xml */*.pyc
+		pylint.log *.egg output.xml flake8.log output.xml */*.pyc .coverage

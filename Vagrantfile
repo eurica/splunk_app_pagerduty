@@ -1,11 +1,11 @@
-# Vagrantfile for Splunk Pagerduty App.
+# Vagrantfile for Splunk App for Pagerduty.
 #
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #
 # Author:: Greg Albrecht <mailto:gba@splunk.com>
 # Copyright:: Copyright 2012 Splunk, Inc.
-# License:: All rights reserved. Do not redistribute.
+# License:: Apache License 2.0
 #
 
 

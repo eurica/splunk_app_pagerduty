@@ -1,3 +1,0 @@
-include dflib.py
-recursive-include bin *.*
-recursive-include default *.*

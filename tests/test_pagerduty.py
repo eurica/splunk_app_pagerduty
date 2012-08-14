@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Tests for Splunk Pagerduty App.
+"""Tests for Splunk App for PagerDuty.
 
 Derived from @samuelks' Python Pagerduty Module
 https://github.com/samuel/python-pagerduty
