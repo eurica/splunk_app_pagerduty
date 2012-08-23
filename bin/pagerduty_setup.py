@@ -31,7 +31,7 @@ class ConfigPagerDutyApp(splunk.admin.MConfigHandler):
         if self.callerArgs.data['service_api_key'][0] in [None, '']:
             self.callerArgs.data['service_api_key'][0] = ''
 
-        self.writeConf('pagerduty', 'service_api', self.callerArgs.data)
+        self.writeConf('pagerduty', 'pagerduty_api', self.callerArgs.data)
         install_pagerduty_py(os.environ.get('SPLUNK_HOME'))
 
 
