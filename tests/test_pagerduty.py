@@ -56,7 +56,7 @@ class TestPagerDuty(unittest.TestCase):
         self._setup_splunk_home()
         config = ConfigParser.RawConfigParser()
         config.read(self.config_file)
-        config.set('service_api', 'service_api_key', self.rands)
+        config.set('pagerduty_api', 'service_api_key', self.rands)
         with open(self.config_file, 'wb') as cfg:
             config.write(cfg)
         service_api_key = bin.pagerduty.get_service_api_key(self.config_file)

@@ -126,7 +126,7 @@ def get_service_api_key(config_file):
     """
     config = ConfigParser.ConfigParser()
     config.read(config_file)
-    return config.get('service_api', 'service_api_key')
+    return config.get('pagerduty_api', 'service_api_key')
 
 
 def main():
