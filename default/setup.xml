@@ -9,7 +9,7 @@ License:: Apache License 2.0
 
 <setup>
   <block title="PagerDuty Service Integration" endpoint="pagerduty/pagerduty_api" entity="pagerduty_api">
-    <input field="service_api_key">
+    <input field="pagerduty_api_key">
       <label>Service API key</label>
       <type>text</type>
     </input>

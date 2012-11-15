@@ -7,4 +7,4 @@ __license__ = 'Apache License 2.0'
 
 
 from .pagerduty import (PagerDutyException, PagerDuty, extract_events,
-    trigger_pagerduty, get_service_api_key)
+    trigger_pagerduty, get_pagerduty_api_key)

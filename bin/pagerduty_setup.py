@@ -17,7 +17,7 @@ class ConfigPagerDutyApp(splunk.admin.MConfigHandler):
     """PagerDuty Splunk Setup REST Handler."""
     def setup(self):
         if self.requestedAction == splunk.admin.ACTION_EDIT:
-            self.supportedArgs.addOptArg('service_api_key')
+            self.supportedArgs.addOptArg('pagerduty_api_key')
 
     def handleList(self, confInfo):
         conf = self.readConf('pagerduty')
@@ -28,8 +28,8 @@ class ConfigPagerDutyApp(splunk.admin.MConfigHandler):
 
     def handleEdit(self, confInfo):
         del confInfo
-        if self.callerArgs.data['service_api_key'][0] in [None, '']:
-            self.callerArgs.data['service_api_key'][0] = ''
+        if self.callerArgs.data['pagerduty_api_key'][0] in [None, '']:
+            self.callerArgs.data['pagerduty_api_key'][0] = ''
 
         self.writeConf('pagerduty', 'pagerduty_api', self.callerArgs.data)
         install_pagerduty_py(os.environ.get('SPLUNK_HOME'))
@@ -38,7 +38,8 @@ class ConfigPagerDutyApp(splunk.admin.MConfigHandler):
 def install_pagerduty_py(splunk_home):
     """Copies pagerduty.py to Splunk's bin/scripts directory."""
     script_src = os.path.join(
-        splunk_home, 'etc', 'apps', 'splunk_app_pagerduty', 'bin', 'pagerduty.py')
+        splunk_home, 'etc', 'apps', 'splunk_app_pagerduty', 'bin',
+        'pagerduty.py')
     script_dest = os.path.join(splunk_home, 'bin', 'scripts')
 
     logging.info(
