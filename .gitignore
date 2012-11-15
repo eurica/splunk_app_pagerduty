@@ -18,3 +18,5 @@ output.xml
 .coverage
 pylint.log
 flake8.log
+tmp/
+t/

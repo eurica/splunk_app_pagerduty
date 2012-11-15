@@ -95,28 +95,28 @@ def extract_events(events_file):
     return events
 
 
-def trigger_pagerduty(description, details, service_api_key,
+def trigger_pagerduty(description, details, pagerduty_api_key,
                       incident_key=None):
     """Triggers PagerDuty Incident with given params.
 
     @param description:
     @param details:
-    @param service_api_key: PagerDuty Service Integration API Key.
+    @param pagerduty_api_key: PagerDuty Service Integration API Key.
     @incident_key: (default=None)
 
     @type description: str
     @type details: str
-    @type service_api_key: str
+    @type pagerduty_api_key: str
     @type incident_key: str
 
     @return: pagerduty.trigger object.
     @rtype: pagerduty.trigger object.
     """
-    pagerduty = PagerDuty(service_api_key)
+    pagerduty = PagerDuty(pagerduty_api_key)
     return pagerduty.trigger(description, incident_key, details)
 
 
-def get_service_api_key(config_file):
+def get_pagerduty_api_key(config_file):
     """Extracts PagerDuty Service Integration API Key from Splunk Config.
 
     @param config_file: Full path to file containing Pagerduty API Credentials.
@@ -126,7 +126,7 @@ def get_service_api_key(config_file):
     """
     config = ConfigParser.ConfigParser()
     config.read(config_file)
-    return config.get('service_api', 'service_api_key')
+    return config.get('pagerduty_api', 'pagerduty_api_key')
 
 
 def main():
@@ -138,7 +138,7 @@ def main():
         os.environ['SPLUNK_HOME'], 'etc', 'apps', 'splunk_app_pagerduty',
         'local', 'pagerduty.conf')
 
-    service_api_key = get_service_api_key(config_file)
+    pagerduty_api_key = get_pagerduty_api_key(config_file)
 
     for k in os.environ:
         if 'SPLUNK_ARG' in k:
@@ -149,8 +149,8 @@ def main():
         details['events'].append(event)
 
     # This description could be any field in your event.
-    description = details['events'][0]['_raw']
-    trigger_pagerduty(description, details, service_api_key)
+    description = os.environ.get('SPLUNK_ARG_5', details['events'][0]['_raw'])
+    trigger_pagerduty(description, details, pagerduty_api_key)
 
 
 if __name__ == '__main__':
