@@ -149,7 +149,8 @@ def main():
         details['events'].append(event)
 
     # This description could be any field in your event.
-    description = os.environ.get('SPLUNK_ARG_5', details['events'][0]['_raw'])
+    default_description = details['events'][0]['_raw'] if details['events'][0].has_key('_raw') else ''
+    description = os.environ.get('SPLUNK_ARG_5', default_description)
     trigger_pagerduty(description, details, pagerduty_api_key)
 
 
