@@ -1,65 +1,66 @@
-# Makefile for splunk_app_pagerduty.
+# Makefile for pagerduty_alert.
 #
-# Home:: https://github.com/ampledata/splunk_app_pagerduty
-# Author:: Greg Albrecht <mailto:gba@splunk.com>
-# Copyright:: Copyright 2012 Splunk, Inc.
-# License:: Apache License 2.0
+# Home:: https://github.com/ampledata/pagerduty_alert
+# Author:: Greg Albrecht <mailto:gba@onbeep.com>
+# Copyright:: Copyright 2014 OnBeep, Inc.
+# License:: Apache License, Version 2.0
 #
 
 
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := build
 
-all: install_requirements install_gemset librarian_update
+BUNDLE_CMD ?= ~/.rbenv/shims/bundle
+
+BUNDLE_EXEC ?= bundle exec
+
+SPLUNK_PKG ?= splunk-6.0.2-196940-Linux-x86_64.tgz
+
+
+# Bundler itself:
+
+$(BUNDLE_CMD):
+	gem install bundler
+
+bundle_install:
+	bundle install
+
 
 install_requirements:
 	pip install -r requirements.txt --use-mirrors
 
 build: clean
-	tar -X .tar_exclude -zcpf splunk_app_pagerduty.spl ../splunk_app_pagerduty
-
-vagrant_up:
-	vagrant up
-
-vagrant: vagrant_up
+	tar -X .tar_exclude -s /\.\.\// -zcf pagerduty_alert.spl ../pagerduty_alert
 
 lint:
-	pylint -f parseable -i y -r y bin/*.py tests/*.py | tee pylint.log
+	pylint -r n bin/*.py tests/*.py || exit 0
 
 flake8:
-	flake8 --exit-zero  --max-complexity 12 bin/*.py tests/*.py | \
-		awk -F\: '{printf "%s:%s: [E]%s\n", $$1, $$2, $$3}' | tee flake8.log
+	flake8 --max-complexity 12 --exit-zero bin/*.py tests/*.py
 
 pep8: flake8
 
-clonedigger:
-	clonedigger --cpd-output .
-
 nosetests:
-	nosetests
+	nosetests tests
 
-test: all lint flake8 clonedigger nosetests
+test: install_requirements splunk_module lint flake8 nosetests
 
-install:
-	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /vagrant/splunk_app_pagerduty.spl -update true -auth admin:changeme'
+install: build
+	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /vagrant/pagerduty_alert.spl -update true -auth admin:okchanged'
 	vagrant ssh -c 'sudo /opt/splunk/bin/splunk restart'
 
 add_input:
-	vagrant ssh -c 'sudo /opt/splunk/bin/splunk add monitor /var/log -auth admin:changeme'
+	vagrant ssh -c 'sudo /opt/splunk/bin/splunk add monitor /var/log -auth admin:okchanged'
 
 generate_events:
 	vagrant ssh -c 'logger -t generated ERROR'
 
 clean:
 	rm -rf *.egg* build dist *.pyc *.pyo cover doctest_pypi.cfg nosetests.xml \
-		pylint.log *.egg output.xml flake8.log output.xml */*.pyc .coverage *.spl
+		pylint.log *.egg output.xml flake8.log output.xml */*.pyc .coverage *.spl *.tgz
 
-
-install_gemset:
-	rvm gemset import pagerduty.gems
-
-librarian_update:
-	librarian-chef update
+vagrant_up:
+	vagrant up
 
 vagrant_provision:
 	vagrant provision
@@ -67,4 +68,10 @@ vagrant_provision:
 vagrant_destroy:
 	vagrant destroy -f
 
-nuke: vagrant_destroy clean all vagrant_up build install add_input
+splunk_module: splunk
+
+splunk: $(SPLUNK_PKG)
+	tar -zxf $(SPLUNK_PKG) --strip-components 4 splunk/lib/python2.7/site-packages/splunk
+
+splunk-6.0.2-196940-Linux-x86_64.tgz:
+	wget http://download.splunk.com/releases/6.0.2/splunk/linux/$(SPLUNK_PKG)

@@ -5,9 +5,9 @@ Derived from @samuelks' Python Pagerduty Module
 https://github.com/samuel/python-pagerduty
 """
 
-__author__ = 'Greg Albrecht <gba@splunk.com>'
-__copyright__ = 'Copyright 2012 Splunk, Inc.'
-__license__ = 'Apache License 2.0'
+__author__ = 'Greg Albrecht <gba@onbeep.com>'
+__copyright__ = 'Copyright 2014 OnBeep, Inc.'
+__license__ = 'Apache License, Version 2.0'
 
 
 import ConfigParser
@@ -16,7 +16,7 @@ import gzip
 try:
     import json
 except ImportError:
-    import simplejson as json
+    import simplejson as json  # pylint: disable=F0401
 import os
 import urllib2
 
@@ -25,7 +25,9 @@ EVENTS_URL = 'events.pagerduty.com/generic/2010-04-15/create_event.json'
 
 
 class PagerDutyException(Exception):
+
     """Exceptions for PagerDuty objects and methods."""
+
     def __init__(self, status, message, errors):
         super(PagerDutyException, self).__init__(message)
         self.msg = message
@@ -43,8 +45,10 @@ class PagerDutyException(Exception):
         return txt
 
 
-class PagerDuty(object):
+class PagerDuty(object):  # pylint: disable=R0903
+
     """Class for triggering PagerDuty Incidents."""
+
     def __init__(self, service_key, https=True, timeout=15):
         self.service_key = service_key
         self.api_endpoint = '://'.join([('http', 'https')[https], EVENTS_URL])
@@ -130,12 +134,12 @@ def get_pagerduty_api_key(config_file):
 
 
 def main():
-    """main, duh?"""
+    """Inits the pagerduty API and renders events to the API."""
     # We'll serialize this dict into JSON -> PagerDuty Details.
     details = {'env': {}, 'events': []}
 
     config_file = os.path.join(
-        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'splunk_app_pagerduty',
+        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'pagerduty_alert',
         'local', 'pagerduty.conf')
 
     pagerduty_api_key = get_pagerduty_api_key(config_file)
@@ -149,7 +153,8 @@ def main():
         details['events'].append(event)
 
     # This description could be any field in your event.
-    if '_raw' in details['events'][0]:
+    if ('events' in details and details['events']
+            and '_raw' in details['events'][0]):
         default_description = details['events'][0]['_raw']
     else:
         default_description = ''
