@@ -26,4 +26,4 @@ Copyright 2014 OnBeep, Inc.
 
 License
 =======
-Apache License 2.0
+Apache License, Version 2.0
