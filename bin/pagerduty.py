@@ -5,7 +5,7 @@ Derived from @samuelks' Python Pagerduty Module
 https://github.com/samuel/python-pagerduty
 """
 
-__author__ = 'Greg Albrecht <gba@splunk.com>'
+__author__ = 'Greg Albrecht <gba@onbeep.com>'
 __copyright__ = 'Copyright 2012 Splunk, Inc.'
 __license__ = 'Apache License 2.0'
 

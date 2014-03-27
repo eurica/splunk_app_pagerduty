@@ -3,7 +3,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #
-# Author:: Greg Albrecht <mailto:gba@splunk.com>
+# Author:: Greg Albrecht <mailto:gba@onbeep.com>
 # Copyright:: Copyright 2012 Splunk, Inc.
 # License:: Apache License 2.0
 #

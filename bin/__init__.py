@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Splunk App for Pagerduty."""
 
-__author__ = 'Greg Albrecht <gba@splunk.com>'
+__author__ = 'Greg Albrecht <gba@onbeep.com>'
 __copyright__ = 'Copyright 2012 Splunk, Inc.'
 __license__ = 'Apache License 2.0'
 

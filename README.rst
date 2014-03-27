@@ -15,7 +15,7 @@ Usage
 
 Author
 ======
-* Greg Albrecht <gba@splunk.com> http://ampledata.org/
+* Greg Albrecht <gba@onbeep.com> http://ampledata.org/
 * `PagerDuty Python Module`_ derived from Samuel Stauffer http://samuelks.com/
 
 .. _`PagerDuty Python Module`: https://github.com/samuel/python-pagerduty
