@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-"""Tests for Splunk App for PagerDuty.
+# -*- coding: utf-8 -*-
 
-Derived from @samuelks' Python Pagerduty Module
-https://github.com/samuel/python-pagerduty
-"""
+"""Tests for Splunk App for PagerDuty."""
 
 __author__ = 'Greg Albrecht <gba@onbeep.com>'
 __copyright__ = 'Copyright 2014 OnBeep, Inc.'
@@ -19,38 +17,40 @@ import shutil
 import tempfile
 import unittest
 
-from .context import bin
+from .context import bin  # pylint: disable=W0622
 
 
-class TestPagerDuty(unittest.TestCase):
+class TestPagerDuty(unittest.TestCase):  # pylint: disable=R0902, R0904
+
     """Tests for Splunk Pagerduty App."""
 
     def setUp(self):
         self.config_file = tempfile.mkstemp()[1]
         self.events_file = tempfile.mkstemp()[1]
         self.rands = ''.join(
-            [random.choice('unittest0123456789') for xyz in range(8)])
+            [random.choice('unittest0123456789') for _ in range(8)])
         self.rand_row = [self.rands, self.rands]
 
     def _setup_splunk_home(self):
-        self.raw_config = 'default/pagerduty.conf'
-        self.raw_pagerduty_py = 'bin/pagerduty.py'
+        """Creates phony SPLUNK_HOME."""
+        raw_config = 'default/pagerduty.conf'
+        raw_pagerduty_py = 'bin/pagerduty.py'
 
-        self.splunk_home = tempfile.mkdtemp()
+        splunk_home = tempfile.mkdtemp()
 
-        self.pd_app = os.path.join(
-            self.splunk_home, 'etc', 'apps', 'pagerduty')
-        self.pd_bin = os.path.join(self.pd_app, 'bin')
-        self.pd_default = os.path.join(self.pd_app, 'default')
-        self.spl_scripts = os.path.join(
-            self.splunk_home, 'bin', 'scripts')
+        pd_app = os.path.join(
+            splunk_home, 'etc', 'apps', 'pagerduty')
+        pd_bin = os.path.join(pd_app, 'bin')
+        pd_default = os.path.join(pd_app, 'default')
+        spl_scripts = os.path.join(
+            splunk_home, 'bin', 'scripts')
 
-        os.makedirs(self.pd_bin)
-        os.makedirs(self.pd_default)
-        os.makedirs(self.spl_scripts)
+        os.makedirs(pd_bin)
+        os.makedirs(pd_default)
+        os.makedirs(spl_scripts)
 
-        shutil.copyfile(self.raw_config, self.config_file)
-        shutil.copy(self.raw_pagerduty_py, self.pd_bin)
+        shutil.copyfile(raw_config, self.config_file)
+        shutil.copy(raw_pagerduty_py, pd_bin)
 
     def test_get_pagerduty_api_key(self):
         self._setup_splunk_home()
@@ -59,7 +59,8 @@ class TestPagerDuty(unittest.TestCase):
         config.set('pagerduty_api', 'pagerduty_api_key', self.rands)
         with open(self.config_file, 'wb') as cfg:
             config.write(cfg)
-        pagerduty_api_key = bin.pagerduty.get_pagerduty_api_key(self.config_file)
+        pagerduty_api_key = bin.pagerduty.get_pagerduty_api_key(
+            self.config_file)
         self.assertEqual(pagerduty_api_key, self.rands)
 
     def test_extract_events(self):

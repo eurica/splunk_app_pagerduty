@@ -20,3 +20,4 @@ pylint.log
 flake8.log
 tmp/
 t/
+splunk/

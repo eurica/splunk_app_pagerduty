@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "chef-splunk": {
+      "locked_version": "1.1.0",
+      "git": "git://github.com/opscode-cookbooks/chef-splunk.git",
+      "ref": "62eb1a0a03c86d3658d4056c8b820e329f20d2ce"
+    },
+    "chef-vault": {
+      "locked_version": "1.0.4"
+    }
+  }
+}
