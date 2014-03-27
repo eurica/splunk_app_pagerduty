@@ -2,7 +2,7 @@
 """PagerDuty Splunk Setup REST Handler."""
 
 __author__ = 'Greg Albrecht <gba@onbeep.com>'
-__copyright__ = 'Copyright 2012 Splunk, Inc.'
+__copyright__ = 'Copyright 2014 OnBeep, Inc.'
 __license__ = 'Apache License 2.0'
 
 

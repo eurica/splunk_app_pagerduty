@@ -22,7 +22,7 @@ Author
 
 Copyright
 =========
-Copyright 2012 Splunk, Inc.
+Copyright 2014 OnBeep, Inc.
 
 License
 =======

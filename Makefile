@@ -2,7 +2,7 @@
 #
 # Home:: https://github.com/ampledata/splunk_app_pagerduty
 # Author:: Greg Albrecht <mailto:gba@onbeep.com>
-# Copyright:: Copyright 2012 Splunk, Inc.
+# Copyright:: Copyright 2014 OnBeep, Inc.
 # License:: Apache License 2.0
 #
 
