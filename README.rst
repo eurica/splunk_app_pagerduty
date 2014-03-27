@@ -1,21 +1,22 @@
-PagerDuty Alert - Trigger PagerDuty Incidents from Splunk Alerts.
+.. topic:: PagerDuty Alert - Trigger PagerDuty Incidents from Splunk Alerts.
 
-Usage
-=====
-
-Overview:
+Usage Overview
+--------------
 
 1. Download & Install `Splunk <http://www.splunk.com/download>`_.
 2. Create a `PagerDuty Service Integration API Key`_.
 3. Install this App.
 4. Set PagerDuty API Key.
-5. Enable Alert (below):
+5. Enable Alert.
 
 .. _`PagerDuty Service Integration API Key`: http://developer.pagerduty.com/documentation/integration/events
 
-Detailed:
 
-Phase I: Install & Configure App:
+Detailed Usage
+--------------
+
+Phase I - Install & Configure App
+=================================
 
 #. Download & Install Splunk.
 #. From Splunk, select Apps and click Find More Apps:
@@ -32,7 +33,9 @@ Phase I: Install & Configure App:
     .. image:: https://raw.githubusercontent.com/ampledata/pagerduty_alert/develop/docs/service_api_key.png
     .. image:: https://raw.githubusercontent.com/ampledata/pagerduty_alert/develop/docs/successfully_updated.png
 
-Phase II: Enable Alert:
+
+Phase II - Enable Alert
+=======================
 
 #. From Splunk, search for a term and click Save As - Alert:
     .. image:: https://raw.githubusercontent.com/ampledata/pagerduty_alert/develop/docs/new_search.png
