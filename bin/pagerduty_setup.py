@@ -43,7 +43,7 @@ def install_pagerduty_py(splunk_home):
     """Copies pagerduty.py to Splunk's bin/scripts directory."""
 
     script_src = os.path.join(
-        splunk_home, 'etc', 'apps', 'pagerduty_alert', 'bin', 'pagerduty.py')
+        splunk_home, 'etc', 'apps', 'splunk_pagerduty', 'bin', 'pagerduty.py')
     script_dest = os.path.join(splunk_home, 'bin', 'scripts')
 
     logging.info(

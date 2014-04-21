@@ -1,4 +1,4 @@
-# Requirements for pagerduty_alert
+# Requirements for splunk_pagerduty
 #
 # Author:: Greg Albrecht <mailto:gba@onbeep.com>
 # Copyright:: Copyright 2014 OnBeep, Inc.

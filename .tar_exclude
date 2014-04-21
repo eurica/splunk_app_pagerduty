@@ -22,3 +22,4 @@ requirements.txt
 .travis.yml
 docs
 data_bags
+splunk

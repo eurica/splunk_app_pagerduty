@@ -1,6 +1,6 @@
-# Makefile for pagerduty_alert.
+# Makefile for splunk_pagerduty.
 #
-# Home:: https://github.com/ampledata/pagerduty_alert
+# Home:: https://github.com/ampledata/splunk_pagerduty
 # Author:: Greg Albrecht <mailto:gba@onbeep.com>
 # Copyright:: Copyright 2014 OnBeep, Inc.
 # License:: Apache License, Version 2.0
@@ -30,7 +30,7 @@ install_requirements:
 	pip install -r requirements.txt --use-mirrors
 
 build: clean
-	tar -X .tar_exclude -s /\.\.\// -zcf pagerduty_alert.spl ../pagerduty_alert
+	tar -X .tar_exclude -s /\.\.\// -zcf splunk_pagerduty.spl ../splunk_pagerduty
 
 lint:
 	pylint -r n bin/*.py tests/*.py || exit 0
@@ -46,7 +46,7 @@ nosetests:
 test: install_requirements splunk_module lint flake8 nosetests
 
 install: build
-	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /vagrant/pagerduty_alert.spl -update true -auth admin:okchanged'
+	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /vagrant/splunk_pagerduty.spl -update true -auth admin:okchanged'
 	vagrant ssh -c 'sudo /opt/splunk/bin/splunk restart'
 
 add_input:
