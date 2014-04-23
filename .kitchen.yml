@@ -1,0 +1,25 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-12.04
+    driver:
+      synced_folders:
+        - ['../../../build', '/build', 'create: true']
+      network:
+        - ['forwarded_port', {guest: 8000, host: 8100}]
+        - ['forwarded_port', {guest: 8089, host: 8189}]
+
+suites:
+  - name: default
+    run_list:
+        - recipe[chef-splunk::default]
+    attributes:
+        dev_mode: true
+        splunk:
+            accept_license: true
+            is_server: true

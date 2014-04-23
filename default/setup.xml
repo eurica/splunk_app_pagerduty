@@ -1,15 +1,17 @@
 <!--
-PagerDuty Setup Configuration
+PagerDurty Alert app for Splunk.
 
 Author:: Greg Albrecht <mailto:gba@onbeep.com>
 Copyright:: Copyright 2014 OnBeep, Inc.
 License:: Apache License, Version 2.0
+Source:: https://github.com/OnBeep/splunk_pagerduty
 -->
 
 
 <setup>
-  <block title="PagerDuty Service Integration" endpoint="pagerduty/pagerduty_api" entity="pagerduty_api">
-    <input field="pagerduty_api_key">
+  <block title="PagerDuty Service Integration"
+      endpoint="splunk_pagerduty/pagerduty_config" entity="pagerduty_config">
+    <input field="api_key">
       <label>Service API key</label>
       <type>text</type>
     </input>

@@ -23,3 +23,5 @@ requirements.txt
 docs
 data_bags
 splunk
+splunk*gz
+build

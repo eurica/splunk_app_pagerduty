@@ -130,7 +130,7 @@ def get_pagerduty_api_key(config_file):
     """
     config = ConfigParser.ConfigParser()
     config.read(config_file)
-    return config.get('pagerduty_api', 'pagerduty_api_key')
+    return config.get('pagerduty_config', 'api_key')
 
 
 def main():
@@ -164,4 +164,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

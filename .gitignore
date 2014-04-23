@@ -22,3 +22,5 @@ tmp/
 t/
 splunk/
 splunk*gz
+.kitchen/
+.kitchen.local.yml

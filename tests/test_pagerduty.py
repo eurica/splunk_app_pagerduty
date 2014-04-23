@@ -8,66 +8,205 @@ __copyright__ = 'Copyright 2014 OnBeep, Inc.'
 __license__ = 'Apache License, Version 2.0'
 
 
-import ConfigParser
-import csv
-import gzip
 import os
 import random
-import shutil
-import tempfile
+import time
 import unittest
 
-from .context import bin  # pylint: disable=W0622
+import fabric
+import fabtools.vagrant
+
+import requests
+
+# from .context import bin  # pylint: disable=W0622
 
 
-class TestPagerDuty(unittest.TestCase):  # pylint: disable=R0902, R0904
+APP_NAME = 'splunk_pagerduty'
+SPLUNK_ADMIN_PASSWORD = 'okchanged'
+SPLUNKD_PORT = 8189
+SPLUNK_HOME = '/opt/splunk'
+API_KEY = '74a4cdf9c8d94b098c9517c2b48a00ec'
 
-    """Tests for Splunk Pagerduty App."""
+
+class TestSplunkPagerDutyApp(unittest.TestCase):  # NOQA pylint: disable=R0902, R0904
+
+    """Tests for splunk_pagerduty App."""
 
     def setUp(self):
-        self.config_file = tempfile.mkstemp()[1]
-        self.events_file = tempfile.mkstemp()[1]
-        self.rands = ''.join(
-            [random.choice('unittest0123456789') for _ in range(8)])
-        self.rand_row = [self.rands, self.rands]
+        self.auth = "-auth admin:%s" % SPLUNK_ADMIN_PASSWORD
+        self.app_path = os.path.join(SPLUNK_HOME, 'etc', 'apps', APP_NAME)
+        self.fcontains = fabric.contrib.files.contains
+        self.fexists = fabric.contrib.files.exists
 
-    def _setup_splunk_home(self):
-        """Creates phony SPLUNK_HOME."""
-        raw_config = 'default/pagerduty.conf'
-        raw_pagerduty_py = 'bin/pagerduty.py'
+    def tearDown(self):
+        self.remove_app()
+        ss_conf = os.path.join(
+            SPLUNK_HOME, 'etc', 'users', 'admin', 'search', 'local',
+            'savedsearches.conf'
+        )
+        with fabtools.vagrant.vagrant_settings():
+            fabric.api.sudo("rm -rf %s" % ss_conf)
 
-        splunk_home = tempfile.mkdtemp()
+    @staticmethod
+    def randstr(length=8):
+        """Generates a random string of `len`."""
+        return ''.join(
+            [random.choice('unittest0123456789') for _ in range(length)])
 
-        pd_app = os.path.join(
-            splunk_home, 'etc', 'apps', 'pagerduty')
-        pd_bin = os.path.join(pd_app, 'bin')
-        pd_default = os.path.join(pd_app, 'default')
-        spl_scripts = os.path.join(
-            splunk_home, 'bin', 'scripts')
+    def backup_app(self):
+        """Backs up App for post-test forensics."""
+        with fabtools.vagrant.vagrant_settings():
+            fabric.api.sudo(
+                'tar -zcpf /tmp/%s_%s.tgz %s || true' %
+                (APP_NAME, time.time(), self.app_path)
+            )
 
-        os.makedirs(pd_bin)
-        os.makedirs(pd_default)
-        os.makedirs(spl_scripts)
+    @staticmethod
+    def build_app():
+        """Builds App archive."""
+        fabric.api.local('make clean build')
 
-        shutil.copyfile(raw_config, self.config_file)
-        shutil.copy(raw_pagerduty_py, pd_bin)
+    # TODO(@ampledata) Not fully implemented yet.
+    @staticmethod
+    def configure_app(**kwargs):
+        """Configures app with given parameters."""
+        endpoint = (
+            "/servicesNS/nobody/%s/apps/local/%s/setup" % (APP_NAME, APP_NAME))
+        config_ns = "/%s/pagerduty_config/pagerduty_config" % APP_NAME
+        config_url = "https://localhost:%s%s" % (SPLUNKD_PORT, endpoint)
 
-    def test_get_pagerduty_api_key(self):
-        self._setup_splunk_home()
-        config = ConfigParser.RawConfigParser()
-        config.read(self.config_file)
-        config.set('pagerduty_api', 'pagerduty_api_key', self.rands)
-        with open(self.config_file, 'wb') as cfg:
-            config.write(cfg)
-        pagerduty_api_key = bin.pagerduty.get_pagerduty_api_key(
-            self.config_file)
-        self.assertEqual(pagerduty_api_key, self.rands)
+        config_data = {"%s/api_key" % config_ns: API_KEY}
 
-    def test_extract_events(self):
-        gzf = gzip.open(self.events_file, 'wb')
-        writer = csv.writer(gzf)
-        writer.writerow(self.rand_row)
-        gzf.close()
+        return requests.post(
+            config_url,
+            data=config_data,
+            verify=False,
+            auth=('admin', SPLUNK_ADMIN_PASSWORD)
+        )
 
-        events = bin.pagerduty.extract_events(self.events_file)
-        self.assertTrue(self.rand_row in events.reader)
+    @staticmethod
+    def splunk_cmd(cmd_args):
+        """
+        Runs the given splunk command on the remote host using sudo.
+
+        @param cmd_args: Command and arguments to run with Splunk.
+        @type cmd_args: str
+
+        @return: Command results.
+        @rtype: `fabric.api.sudo`
+        """
+        return fabric.api.sudo("%s/bin/splunk %s" % (SPLUNK_HOME, cmd_args))
+
+    @staticmethod
+    def splunk_restart():
+        """Restarts Splunk."""
+        return TestSplunkPagerDutyApp.splunk_cmd('restart')
+
+    def remove_app(self):
+        """Removes the App."""
+        with fabtools.vagrant.vagrant_settings():
+            TestSplunkPagerDutyApp.splunk_cmd(
+                "remove app %s %s || true" % (APP_NAME, self.auth)
+            )
+            TestSplunkPagerDutyApp.splunk_restart()
+
+    def install_app(self):
+        """Installs the App."""
+        with fabtools.vagrant.vagrant_settings():
+            TestSplunkPagerDutyApp.splunk_cmd(
+                "install app /build/%s.spl -update true %s" %
+                (APP_NAME, self.auth)
+            )
+            TestSplunkPagerDutyApp.splunk_restart()
+
+    def test_build_app(self):
+        """Tests building App archive."""
+        TestSplunkPagerDutyApp.build_app()
+        self.assertTrue(os.path.exists("build/%s.spl" % APP_NAME))
+
+    def test_install_app(self):
+        """Tests installing App."""
+        TestSplunkPagerDutyApp.build_app()
+        self.install_app()
+        with fabtools.vagrant.vagrant_settings():
+            self.assertTrue(self.fexists(self.app_path))
+
+    def test_uninstall_app(self):
+        """Tests uninstalling App."""
+        TestSplunkPagerDutyApp.build_app()
+        self.install_app()
+        self.remove_app()
+        with fabtools.vagrant.vagrant_settings():
+            self.assertFalse(self.fexists(self.app_path))
+
+    def test_unconfigured_app(self):
+        """Tests that App is not configured upon initial install."""
+        self.install_app()
+
+        config_file = "%s/local/pagerduty.conf" % self.app_path
+        app_config = "%s/local/app.conf" % self.app_path
+
+        with fabtools.vagrant.vagrant_settings():
+            self.assertFalse(
+                self.fexists(config_file, use_sudo=True, verbose=True)
+            )
+
+            self.assertFalse(
+                self.fexists(app_config, use_sudo=True, verbose=True)
+            )
+
+    def test_configured_app(self):
+        """Tests configuring App."""
+        self.install_app()
+
+        endpoint = (
+            "/servicesNS/nobody/%s/apps/local/%s/setup" % (APP_NAME, APP_NAME))
+        config_ns = "/%s/pagerduty_config/pagerduty_config" % APP_NAME
+        config_url = "https://localhost:%s%s" % (SPLUNKD_PORT, endpoint)
+
+        rand_api_key = TestSplunkPagerDutyApp.randstr()
+
+        config_data = {"%s/api_key" % config_ns: rand_api_key}
+
+        config_file = "%s/local/pagerduty.conf" % self.app_path
+        app_config = "%s/local/app.conf" % self.app_path
+
+        print "config_url=%s" % config_url
+        print "config_data=%s" % config_data
+
+        conf_result = requests.post(
+            config_url,
+            data=config_data,
+            verify=False,
+            auth=('admin', SPLUNK_ADMIN_PASSWORD)
+        )
+
+        self.assertEqual(200, conf_result.status_code)
+
+        with fabtools.vagrant.vagrant_settings():
+            self.assertTrue(
+                self.fexists(config_file, use_sudo=True, verbose=True),
+                "Config file %s does not exist." % config_file
+            )
+
+            self.assertTrue(
+                self.fexists(app_config, use_sudo=True, verbose=True),
+                "App config %s does not exist." % app_config
+            )
+
+            self.assertTrue(
+                self.fcontains(
+                    app_config,
+                    text='is_configured = 1',
+                    use_sudo=True
+                ),
+                'App is not configured.'
+            )
+
+            self.assertTrue(
+                self.fcontains(
+                    config_file,
+                    text="api_key = %s" % rand_api_key,
+                    use_sudo=True
+                )
+            )
