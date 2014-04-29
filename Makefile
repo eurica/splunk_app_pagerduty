@@ -1,9 +1,9 @@
-# Makefile for splunk_pagerduty.
+# Makefile for splunk_app_pagerduty.
 #
 # Author:: Greg Albrecht <gba@onbeep.com>
 # Copyright:: Copyright 2014 OnBeep, Inc.
 # License:: Apache License, Version 2.0
-# Source:: https://github.com/ampledata/splunk_pagerduty
+# Source:: https://github.com/ampledata/splunk_app_pagerduty
 #
 
 
@@ -35,7 +35,7 @@ install_requirements:
 	pip install -r requirements.txt --use-mirrors
 
 build: clean
-	@tar -X .tar_exclude -s /\.\.\// -zcf build/splunk_pagerduty.spl ../splunk_pagerduty
+	@tar -X .tar_exclude -s /\.\.\// -zcf build/splunk_app_pagerduty.spl ../splunk_app_pagerduty
 
 lint:
 	pylint --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" \
@@ -52,16 +52,16 @@ nosetests:
 test: install_tools splunk lint flake8 kitchen_converge nosetests
 
 install: build
-	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /build/splunk_pagerduty.spl -update true -auth admin:$(SPLUNK_ADMIN_PASSWORD)'
+	vagrant ssh -c 'sudo /opt/splunk/bin/splunk install app /build/splunk_app_pagerduty.spl -update true -auth admin:$(SPLUNK_ADMIN_PASSWORD)'
 	vagrant ssh -c 'sudo /opt/splunk/bin/splunk restart'
 
 add_input:
 	vagrant ssh -c 'sudo /opt/splunk/bin/splunk add monitor /var/log -auth admin:$(SPLUNK_ADMIN_PASSWORD)'
 
 config:
-	curl -k -d /splunk_pagerduty/pagerduty_config/pagerduty_config/api_key=$(API_KEY) \
+	curl -k -d /splunk_app_pagerduty/pagerduty_config/pagerduty_config/api_key=$(API_KEY) \
 		-u admin:$(SPLUNK_ADMIN_PASSWORD) \
-		https://localhost:$(SPLUNKD_PORT)/servicesNS/nobody/splunk_pagerduty/apps/local/splunk_pagerduty/setup
+		https://localhost:$(SPLUNKD_PORT)/servicesNS/nobody/splunk_app_pagerduty/apps/local/splunk_app_pagerduty/setup
 
 generate_event:
 	vagrant ssh -c 'logger -t generated event'
@@ -92,7 +92,7 @@ $(SPLUNK_PKG):
 	wget http://download.splunk.com/releases/6.0.3/splunk/linux/$(SPLUNK_PKG)
 
 create_saved_search: #generate_event
-	curl -k -u admin:$(SPLUNK_ADMIN_PASSWORD) https://localhost:$(SPLUNKD_PORT)/servicesNS/admin/search/saved/searches -d name=splunk_pagerduty_saved_search \
+	curl -k -u admin:$(SPLUNK_ADMIN_PASSWORD) https://localhost:$(SPLUNKD_PORT)/servicesNS/admin/search/saved/searches -d name=splunk_app_pagerduty_saved_search \
 		--data-urlencode search='generated event' -d action.script=1 -d action.script.filename=pagerduty.py \
 		-d action.script.track_alert=1 -d actions=script -d alert.track=1 -d cron_schedule='*/5 * * * *' -d disabled=0 -d dispatch.earliest_time=-5m@m \
 		-d dispatch.latest_time=now -d run_on_startup=1 -d is_scheduled=1 -d alert_type='number of events' -d alert_comparator='greater than' \

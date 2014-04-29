@@ -21,7 +21,7 @@ import requests
 # from .context import bin  # pylint: disable=W0622
 
 
-APP_NAME = 'splunk_pagerduty'
+APP_NAME = 'splunk_app_pagerduty'
 SPLUNK_ADMIN_PASSWORD = 'okchanged'
 SPLUNKD_PORT = 8189
 SPLUNK_HOME = '/opt/splunk'
@@ -30,7 +30,7 @@ API_KEY = '74a4cdf9c8d94b098c9517c2b48a00ec'
 
 class TestSplunkPagerDutyApp(unittest.TestCase):  # NOQA pylint: disable=R0902, R0904
 
-    """Tests for splunk_pagerduty App."""
+    """Tests for splunk_app_pagerduty App."""
 
     def setUp(self):
         self.auth = "-auth admin:%s" % SPLUNK_ADMIN_PASSWORD

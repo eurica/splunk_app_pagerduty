@@ -1,9 +1,9 @@
-# Requirements for splunk_pagerduty.
+# Requirements for splunk_app_pagerduty.
 #
 # Author:: Greg Albrecht <gba@onbeep.com>
 # Copyright:: Copyright 2014 OnBeep, Inc.
 # License:: Apache License, Version 2.0
-# Source:: https://github.com/OnBeep/splunk_pagerduty
+# Source:: https://github.com/OnBeep/splunk_app_pagerduty
 #
 
 
