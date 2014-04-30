@@ -91,7 +91,7 @@ splunk: $(SPLUNK_PKG)
 $(SPLUNK_PKG):
 	wget http://download.splunk.com/releases/6.0.3/splunk/linux/$(SPLUNK_PKG)
 
-create_saved_search: #generate_event
+create_saved_search: generate_event
 	curl -k -u admin:$(SPLUNK_ADMIN_PASSWORD) https://localhost:$(SPLUNKD_PORT)/servicesNS/admin/search/saved/searches -d name=splunk_pagerduty_saved_search \
 		--data-urlencode search='generated event' -d action.script=1 -d action.script.filename=pagerduty.py \
 		-d action.script.track_alert=1 -d actions=script -d alert.track=1 -d cron_schedule='*/5 * * * *' -d disabled=0 -d dispatch.earliest_time=-5m@m \
