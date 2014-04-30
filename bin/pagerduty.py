@@ -140,7 +140,7 @@ def main():
     details = {'env': {}, 'events': []}
 
     config_file = os.path.join(
-        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'splunk_pagerduty',
+        os.environ['SPLUNK_HOME'], 'etc', 'apps', 'splunk_app_pagerduty',
         'local', 'pagerduty.conf')
 
     pagerduty_api_key = get_pagerduty_api_key(config_file)

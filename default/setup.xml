@@ -4,13 +4,13 @@ PagerDurty Alert app for Splunk.
 Author:: Greg Albrecht <mailto:gba@onbeep.com>
 Copyright:: Copyright 2014 OnBeep, Inc.
 License:: Apache License, Version 2.0
-Source:: https://github.com/OnBeep/splunk_pagerduty
+Source:: https://github.com/OnBeep/splunk_app_pagerduty
 -->
 
 
 <setup>
   <block title="PagerDuty Service Integration"
-      endpoint="splunk_pagerduty/pagerduty_config" entity="pagerduty_config">
+      endpoint="splunk_app_pagerduty/pagerduty_config" entity="pagerduty_config">
     <input field="api_key">
       <label>Service API key</label>
       <type>text</type>
