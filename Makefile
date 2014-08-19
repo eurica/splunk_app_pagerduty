@@ -15,12 +15,14 @@ BUNDLE_EXEC ?= bundle exec
 
 API_KEY ?= 74a4cdf9c8d94b098c9517c2b48a00ec
 
-SPLUNK_PKG ?= splunk-6.0.3-204106-Linux-x86_64.tgz
+SPLUNK_PKG ?= splunk-6.1.3-220630-Linux-x86_64.tgz
 SPLUNK_ADMIN_PASSWORD ?= okchanged
 SPLUNKWEB_PORT ?= 8100
 SPLUNKD_PORT ?= 8189
 
-export VAGRANT_CWD ?= .kitchen/kitchen-vagrant/default-ubuntu-1204/
+KITCHEN_SUITE ?= splunk-61-ubuntu-1204
+
+export VAGRANT_CWD ?= .kitchen/kitchen-vagrant/splunk-61-ubuntu-1204/
 
 
 $(BUNDLE_CMD):
@@ -32,7 +34,7 @@ bundle_install: $(BUNDLE_CMD)
 install_tools: bundle_install install_requirements
 
 install_requirements:
-	pip install -r requirements.txt --use-mirrors
+	pip install -r requirements.txt
 
 build: clean
 	@tar -X .tar_exclude -s /\.\.\// -zcf build/splunk_app_pagerduty.spl ../splunk_app_pagerduty
@@ -80,16 +82,16 @@ vagrant_destroy:
 	vagrant destroy -f
 
 kitchen_converge:
-	bundle exec kitchen converge
+	bundle exec kitchen converge $(KITCHEN_SUITE)
 
 kitchen_destroy:
-	bundle exec kitchen destroy
+	bundle exec kitchen destroy $(KITCHEN_SUITE)
 
 splunk: $(SPLUNK_PKG)
 	tar -zxf $(SPLUNK_PKG) --strip-components 4 splunk/lib/python2.7/site-packages/splunk
 
 $(SPLUNK_PKG):
-	wget http://download.splunk.com/releases/6.0.3/splunk/linux/$(SPLUNK_PKG)
+	wget http://download.splunk.com/releases/6.1.3/splunk/linux/$(SPLUNK_PKG)
 
 create_saved_search: generate_event
 	curl -k -u admin:$(SPLUNK_ADMIN_PASSWORD) https://localhost:$(SPLUNKD_PORT)/servicesNS/admin/search/saved/searches -d name=splunk_app_pagerduty_saved_search \

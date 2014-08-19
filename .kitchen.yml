@@ -15,11 +15,23 @@ platforms:
         - ['forwarded_port', {guest: 8089, host: 8189}]
 
 suites:
-  - name: default
+  - name: splunk-6.0
     run_list:
-        - recipe[chef-splunk::default]
+        - recipe[chef-splunk]
     attributes:
         dev_mode: true
         splunk:
             accept_license: true
             is_server: true
+            server:
+              url: http://download.splunk.com/releases/6.0.3/splunk/linux/splunk-6.0.3-204106-linux-2.6-amd64.deb
+  - name: splunk-6.1
+    run_list:
+        - recipe[chef-splunk]
+    attributes:
+        dev_mode: true
+        splunk:
+            accept_license: true
+            is_server: true
+            server:
+              url: http://download.splunk.com/releases/6.1.3/splunk/linux/splunk-6.1.3-220630-linux-2.6-amd64.deb
