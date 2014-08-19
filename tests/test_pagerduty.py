@@ -68,7 +68,7 @@ class TestSplunkPagerDutyApp(unittest.TestCase):  # NOQA pylint: disable=R0902, 
 
     # TODO(@ampledata) Not fully implemented yet.
     @staticmethod
-    def configure_app(**kwargs):
+    def configure_app(**kwargs):  # pylint: disable=W0613
         """Configures app with given parameters."""
         endpoint = (
             "/servicesNS/nobody/%s/apps/local/%s/setup" % (APP_NAME, APP_NAME))

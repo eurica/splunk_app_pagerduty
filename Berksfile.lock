@@ -1,10 +1,10 @@
 DEPENDENCIES
   chef-splunk
     git: git://github.com/opscode-cookbooks/chef-splunk.git
-    revision: 62eb1a0a03c86d3658d4056c8b820e329f20d2ce
-    ref: 62eb1a0
+    revision: 986b157801ff9456e11fbc1f246aef9554f719c2
+    branch: v1.2.0
 
 GRAPH
-  chef-splunk (1.1.0)
+  chef-splunk (1.2.0)
     chef-vault (>= 1.0.4)
-  chef-vault (1.0.4)
+  chef-vault (1.1.2)
