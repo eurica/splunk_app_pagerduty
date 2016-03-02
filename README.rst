@@ -3,6 +3,8 @@
 Usage Overview
 --------------
 
+If you're using Splunk 6.3 or later, please use our app in the Splunkbase: https://splunkbase.splunk.com/app/3013/
+
 1. Download & Install `Splunk <http://www.splunk.com/download>`_.
 2. Create a `PagerDuty Service Integration API Key`_.
 3. Install this App.
